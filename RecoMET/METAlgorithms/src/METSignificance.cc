@@ -38,7 +38,7 @@ metsig::METSignificance::~METSignificance() {
 reco::METCovMatrix
 metsig::METSignificance::getCovariance(const edm::View<reco::Jet>& jets,
 				       const std::vector< edm::Handle<reco::CandidateView> >& leptons,
-				       const edm::View<reco::Candidate>& pfCandidates,
+				       const edm::Handle<edm::View<reco::Candidate> >& pfCandidates,
 				       double rho,
 				       JME::JetResolution& resPtObj,
 				       JME::JetResolution& resPhiObj,
@@ -51,7 +51,7 @@ metsig::METSignificance::getCovariance(const edm::View<reco::Jet>& jets,
    double cov_yy = 0;
  
    // for lepton and jet subtraction
-   std::vector<reco::CandidatePtr> footprint;
+   std::set<reco::CandidatePtr> footprint;
 
    // subtract leptons out of sumPt
    for ( std::vector< edm::Handle<reco::CandidateView> >::const_iterator lep_i = leptons.begin();
@@ -69,15 +69,16 @@ metsig::METSignificance::getCovariance(const edm::View<reco::Jet>& jets,
    // subtract jets out of sumPt
    for(edm::View<reco::Jet>::const_iterator jet = jets.begin(); jet != jets.end(); ++jet) {
 
-      // disambiguate jets and leptons
-      if(!cleanJet(*jet, leptons) ) continue;
+     // disambiguate jets and leptons
+     if(!cleanJet(*jet, leptons) ) continue;
+     for( unsigned int n=0; n < jet->numberOfSourceCandidatePtrs(); n++){
+       if( jet->sourceCandidatePtr(n).isNonnull() and jet->sourceCandidatePtr(n).isAvailable() ){
 
       for( unsigned int n=0; n < jet->numberOfSourceCandidatePtrs(); n++){
          if( jet->sourceCandidatePtr(n).isNonnull() and jet->sourceCandidatePtr(n).isAvailable() ){
             footprint.push_back(jet->sourceCandidatePtr(n));
          }
       }
-
    }
 
    // calculate sumPt
@@ -98,7 +99,7 @@ metsig::METSignificance::getCovariance(const edm::View<reco::Jet>& jets,
       }
 
    }
-
+   //std::cout<<" pfcands "<<sumPt<<" / nCands "<<nCand<<" / nFootPrint "<<nFootPrint<<" / total "<<pfCandidates->size()<<std::endl;
    // add jets to metsig covariance matrix and subtract them from sumPt
    for(edm::View<reco::Jet>::const_iterator jet = jets.begin(); jet != jets.end(); ++jet) {
      
@@ -151,7 +152,7 @@ metsig::METSignificance::getCovariance(const edm::View<reco::Jet>& jets,
 
    //protection against unphysical events
    if(sumPt<0) sumPt=0;
-
+ 
    // add pseudo-jet to metsig covariance matrix
    cov_xx += pjetParams_[0]*pjetParams_[0] + pjetParams_[1]*pjetParams_[1]*sumPt;
    cov_yy += pjetParams_[0]*pjetParams_[0] + pjetParams_[1]*pjetParams_[1]*sumPt;
