@@ -91,7 +91,7 @@ namespace cms
    //
    // compute the significance
    //
-   reco::METCovMatrix cov = metSigAlgo_->getCovariance( *jets, leptons, *pfCandidates, *rho, resPtObj, resPhiObj, resSFObj, event.isRealData() );
+
    const reco::METCovMatrix cov = metSigAlgo_->getCovariance( *jets, leptons, pfCandidates, *rho, resPtObj, resPhiObj, resSFObj, event.isRealData() );
    double sig  = metSigAlgo_->getSignificance(cov, met);
 
