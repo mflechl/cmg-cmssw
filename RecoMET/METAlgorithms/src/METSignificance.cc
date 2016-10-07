@@ -73,9 +73,11 @@ metsig::METSignificance::getCovariance(const edm::View<reco::Jet>& jets,
      if(!cleanJet(*jet, leptons) ) continue;
      for( unsigned int n=0; n < jet->numberOfSourceCandidatePtrs(); n++){
        if( jet->sourceCandidatePtr(n).isNonnull() and jet->sourceCandidatePtr(n).isAvailable() ){
+
 	 footprint.insert(jet->sourceCandidatePtr(n));
        }
      }
+
    }
 
    // calculate sumPt
