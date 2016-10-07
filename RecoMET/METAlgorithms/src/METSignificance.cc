@@ -82,7 +82,6 @@ metsig::METSignificance::getCovariance(const edm::View<reco::Jet>& jets,
 
    // calculate sumPt
    double sumPt = 0;
-
    int nFootPrint=0, nCand=0;
    for(size_t i = 0; i< pfCandidates->size();  ++i) {
      
