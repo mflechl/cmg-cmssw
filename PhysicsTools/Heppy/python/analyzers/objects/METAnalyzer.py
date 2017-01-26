@@ -35,6 +35,10 @@ class METAnalyzer( Analyzer ):
             #self.handles['vertices'] =  AutoHandle( "offlineSlimmedPrimaryVertices", 'std::vector<reco::Vertex>', fallbackLabel="offlinePrimaryVertices" )
             self.mchandles['packedGen'] = AutoHandle( 'packedGenParticles', 'std::vector<pat::PackedGenParticle>' )
 
+        if self.cfg_ana.isDilepton:
+            self.handles['diLeptons'] = AutoHandle( 'MVAMET:MVAMET','std::vector<pat::MET>' ) #JB
+
+            
     def beginLoop(self, setup):
         super(METAnalyzer,self).beginLoop(setup)
         self.counters.addCounter('events')
@@ -87,6 +91,7 @@ class METAnalyzer( Analyzer ):
                 if dotight and pvflag>2:
                     chargedPVTight.append(pxy)
 
+                    
         def sumXY(pxys):
             px, py = sum(x[0] for x in pxys), sum(x[1] for x in pxys)
             return ROOT.reco.Particle.LorentzVector(-px, -py, 0, hypot(px,py))
@@ -98,6 +103,9 @@ class METAnalyzer( Analyzer ):
         getattr(event,"tkMetPVchs"+self.cfg_ana.collectionPostFix).sumEt = sum([hypot(x[0],x[1]) for x in chargedchs])
         getattr(event,"tkMetPVLoose"+self.cfg_ana.collectionPostFix).sumEt = sum([hypot(x[0],x[1]) for x in chargedPVLoose])
         getattr(event,"tkMetPVTight"+self.cfg_ana.collectionPostFix).sumEt = sum([hypot(x[0],x[1]) for x in chargedPVTight])
+
+        if self.cfg_ana.isDilepton:
+            event.dilepton = self.handles['diLeptons'].product() #JB
 
         if  hasattr(event,'zll_p4'):
             self.adduParaPerp(getattr(event,"tkMet"+self.cfg_ana.collectionPostFix), event.zll_p4,"_zll")
@@ -208,7 +216,7 @@ class METAnalyzer( Analyzer ):
                setattr(event, "met{0}_shifted_{1}".format(self.cfg_ana.collectionPostFix, i),m)
                setattr(event, "met{0}_shifted_{1}".format(self.cfg_ana.collectionPostFix, name),m)
 
-        self.met_sig = self.met.metSignificance()
+        self.met_sig = self.met.significance()
         self.met_sumet = self.met.sumEt()
 
         if self.old74XMiniAODs and self.recalibrateMET != "type1":

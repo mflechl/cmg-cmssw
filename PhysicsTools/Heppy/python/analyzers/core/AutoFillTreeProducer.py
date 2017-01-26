@@ -79,6 +79,23 @@ class AutoFillTreeProducer( TreeAnalyzerNumpy ):
                         for i in range(nvals): tr.var('pdfWeight_%s_%d' % (pdf,i))
                     else:
                         tr.vector('pdfWeight_%s' % pdf, nvals)
+            ## extracted PDF weights #MF LHE until next def
+            vlen=0
+            vlen_scale=9
+            vlen_as=2
+            if hasattr(self.cfg_ana, "PDFGen") and self.cfg_ana.PDFGen == "MG":
+                vlen=100
+            if hasattr(self.cfg_ana, "PDFGen") and self.cfg_ana.PDFGen == "aMC":
+                vlen=100
+            if hasattr(self.cfg_ana, "PDFWeights") and len(self.cfg_ana.PDFWeights) > 0:
+                if self.scalar:
+                    for i in range(vlen): tr.var('pdfWeightEx_pdf_%d' % i)
+                    for i in range(vlen_scale): tr.var('pdfWeightEx_scale_%d' % i)
+                    for i in range(vlen_as): tr.var('pdfWeightEx_as_%d' % i)
+                else:
+                    tr.vector('pdfWeightEx_pdf', vlen)
+                    tr.vector('pdfWeightEx_scale', vlen_scale)
+                    tr.vector('pdfWeightEx_as', vlen_as)
 
     def declareVariables(self,setup):
         isMC = self.cfg_comp.isMC 
@@ -135,12 +152,20 @@ class AutoFillTreeProducer( TreeAnalyzerNumpy ):
             if hasattr(event,"pdfWeights") :
               for (pdf,nvals) in self.pdfWeights:
                 if len(event.pdfWeights[pdf]) != nvals:
-                    raise RuntimeError("PDF lenght mismatch for %s, declared %d but the event has %d" % (pdf,nvals,event.pdfWeights[pdf]))
+                    raise RuntimeError, "PDF lenght mismatch for %s, declared %d but the event has %d" % (pdf,nvals,event.pdfWeights[pdf])
                 if self.scalar:
                     for i,w in enumerate(event.pdfWeights[pdf]):
                         tr.fill('pdfWeight_%s_%d' % (pdf,i), w)
                 else:
                     tr.vfill('pdfWeight_%s' % pdf, event.pdfWeights[pdf])
+                #extracted PDF weights
+                if hasattr(event,"exWeight_pdf") :  #MF LHE
+                    #print "Length: %d" % len(event.exWeight)
+                    tr.vfill('pdfWeightEx_pdf', event.exWeight_pdf) #MF LHE
+                if hasattr(event,"exWeight_scale") :  #MF LHE
+                    tr.vfill('pdfWeightEx_scale', event.exWeight_scale) #MF LHE
+                if hasattr(event,"exWeight_as") :  #MF LHE
+                    tr.vfill('pdfWeightEx_as', event.exWeight_as) #MF LHE
 
     def process(self, event):
 	if hasattr(self.cfg_ana,"filter") :	

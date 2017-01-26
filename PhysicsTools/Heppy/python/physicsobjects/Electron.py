@@ -17,7 +17,8 @@ class Electron( Lepton ):
         self.tightIdResult = None
         self.associatedVertex = None
         self.rho              = None
-        self.rhoHLT           = None
+#ms        self.rhoHLT           = None
+        self.rhoHLT           = 0.
         self._mvaNonTrigV0  = {True:None, False:None}
         self._mvaTrigV0     = {True:None, False:None}
         self._mvaTrigNoIPV0 = {True:None, False:None}
