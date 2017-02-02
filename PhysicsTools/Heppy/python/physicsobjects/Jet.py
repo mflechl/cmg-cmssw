@@ -121,7 +121,7 @@ class Jet(PhysicsObject):
             else                               : return 0;
         
         # jetID from here: https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID#Recommendations_for_13_TeV_data
-        if name == "POG_PFID_Loose":    return ((eta<3.0 and ((npr>1 and phf<0.99 and nhf<0.99) and (eta>2.4 or (elf<0.99 and chf>0 and chm>0)))) or (eta>3.0 and (phf<0.90 and npn>10)));
+        if name == "POG_PFID_Loose":    return ( ((nhf<0.99 and phf<0.99 and npr>1) and ((abs(eta)<=2.4 and chf>0 and chm>0 and elf<0.99) or abs(eta)>2.4) and abs(eta)<=2.7) or (phf<0.90 and npn>2 and abs(eta)>2.7 and abs(eta)<=3.0 ) or (phf<0.90 and npn>10 and abs(eta)>3.0 ) );
         if name == "POG_PFID_Medium":   return (npr>1 and phf<0.95 and nhf<0.95 and muf < 0.8) and (eta>2.4 or (elf<0.99 and chf>0 and chm>0));
         if name == "POG_PFID_Tight":    return ((eta<3.0 and ((npr>1 and phf<0.90 and nhf<0.90) and (eta>2.4 or (elf<0.99 and chf>0 and chm>0)))) or (eta>3.0 and (phf<0.90 and npn>10)));
         if name == "VBFHBB_PFID_Loose":  return (npr>1 and phf<0.99 and nhf<0.99);
