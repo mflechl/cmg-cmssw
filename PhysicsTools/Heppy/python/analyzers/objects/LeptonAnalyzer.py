@@ -163,26 +163,30 @@ class LeptonAnalyzer( Analyzer ):
 
         #muons
         allmuons = self.makeAllMuons(event)
-
         #electrons        
         allelectrons = self.makeAllElectrons(event)
 
         #make inclusive leptons
+        inclusiveMuons = allmuons
+        inclusiveElectrons = allelectrons
+
         inclusiveMuons = []
         inclusiveElectrons = []
         for mu in allmuons:
-            if (mu.track().isNonnull() and mu.muonID(self.cfg_ana.inclusive_muon_id) and 
+            #if (mu.track().isNonnull() and mu.muonID(self.cfg_ana.inclusive_muon_id) and
+            if (mu.track().isNonnull() and
                     mu.pt()>self.cfg_ana.inclusive_muon_pt and abs(mu.eta())<self.cfg_ana.inclusive_muon_eta and 
                     abs(mu.dxy())<self.cfg_ana.inclusive_muon_dxy and abs(mu.dz())<self.cfg_ana.inclusive_muon_dz):
                 inclusiveMuons.append(mu)
         for ele in allelectrons:
-            if ( ele.electronID(self.cfg_ana.inclusive_electron_id) and
-                    ele.pt()>self.cfg_ana.inclusive_electron_pt and abs(ele.eta())<self.cfg_ana.inclusive_electron_eta and 
+            #if ( ele.electronID(self.cfg_ana.inclusive_electron_id) and
+            if  (   ele.pt()>self.cfg_ana.inclusive_electron_pt and abs(ele.eta())<self.cfg_ana.inclusive_electron_eta and 
                     abs(ele.dxy())<self.cfg_ana.inclusive_electron_dxy and abs(ele.dz())<self.cfg_ana.inclusive_electron_dz and 
                     ele.lostInner()<=self.cfg_ana.inclusive_electron_lostHits ):
                 inclusiveElectrons.append(ele)
+
         event.inclusiveLeptons = inclusiveMuons + inclusiveElectrons
- 
+
         if self.doMiniIsolation:
             if self.miniIsolationVetoLeptons == "inclusive":
                 for lep in event.inclusiveLeptons: 
@@ -200,8 +204,8 @@ class LeptonAnalyzer( Analyzer ):
 
         # make loose leptons (basic selection)
         for mu in inclusiveMuons:
-                if (mu.muonID(self.cfg_ana.loose_muon_id) and 
-                        mu.pt() > self.cfg_ana.loose_muon_pt and abs(mu.eta()) < self.cfg_ana.loose_muon_eta and 
+                #if (mu.muonID(self.cfg_ana.loose_muon_id) and 
+                if  (   mu.pt() > self.cfg_ana.loose_muon_pt and abs(mu.eta()) < self.cfg_ana.loose_muon_eta and 
                         abs(mu.dxy()) < self.cfg_ana.loose_muon_dxy and abs(mu.dz()) < self.cfg_ana.loose_muon_dz and
                         self.muIsoCut(mu)):
                     mu.looseIdSusy = True
@@ -212,8 +216,8 @@ class LeptonAnalyzer( Analyzer ):
                     event.otherLeptons.append(mu)
         looseMuons = event.selectedLeptons[:]
         for ele in inclusiveElectrons:
-               if (ele.electronID(self.cfg_ana.loose_electron_id) and
-                         ele.pt()>self.cfg_ana.loose_electron_pt and abs(ele.eta())<self.cfg_ana.loose_electron_eta and 
+                #if (ele.electronID(self.cfg_ana.loose_electron_id) and
+                if  (    ele.pt()>self.cfg_ana.loose_electron_pt and abs(ele.eta())<self.cfg_ana.loose_electron_eta and 
                          abs(ele.dxy()) < self.cfg_ana.loose_electron_dxy and abs(ele.dz())<self.cfg_ana.loose_electron_dz and 
                          #self.eleIsoCut(ele) and 
                          ele.lostInner() <= self.cfg_ana.loose_electron_lostHits ): # and
@@ -221,7 +225,7 @@ class LeptonAnalyzer( Analyzer ):
                     event.selectedLeptons.append(ele)
                     event.selectedElectrons.append(ele)
                     ele.looseIdSusy = True
-               else:
+                else:
                     event.otherLeptons.append(ele)
                     ele.looseIdSusy = False
 
@@ -396,6 +400,9 @@ class LeptonAnalyzer( Analyzer ):
         # Attach the vertex
         for ele in allelectrons:
             ele.associatedVertex = event.vertices[0]# if len(event.goodVertices)>0 else event.vertices[0]
+
+        for ele in allelectrons:
+            ele.event = event.input.object()
 
         # Compute relIso with R=0.3 and R=0.4 cones
         for ele in allelectrons:
