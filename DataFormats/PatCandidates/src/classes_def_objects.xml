@@ -524,6 +524,7 @@
   <class name="pat::PATTauDiscriminatorRef"/>
   <class name="pat::PATTauDiscriminatorRefProd"/>
   <class name="pat::PATTauDiscriminatorRefVector"/>
+  <class name="edm::RefProd<std::vector<pat::Tau>>"/>
   <class name="edm::Wrapper<pat::PATTauDiscriminator>"/>
 
   <class name="std::pair<pat::TauRef, float>"/>

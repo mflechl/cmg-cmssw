@@ -13,12 +13,19 @@ class TauAnalyzer( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):
         super(TauAnalyzer,self).__init__(cfg_ana,cfg_comp,looperName)
 
+        self.tau_wps = ['Loose', 'Medium', 'Tight', 'VLoose', 'VTight', 'VVTight', 'raw']
+
     #----------------------------------------
     # DECLARATION OF HANDLES OF LEPTONS STUFF   
     #----------------------------------------
     def declareHandles(self):
         super(TauAnalyzer, self).declareHandles()
         self.handles['taus'] = AutoHandle( ('slimmedTaus',''),'std::vector<pat::Tau>')
+        for wp in self.tau_wps:
+            self.handles['taumva_{wp}'.format(wp=wp)] = AutoHandle(
+                'rerunDiscriminationByIsolationMVArun2v1{wp}'.format(wp=wp),
+                'pat::PATTauDiscriminator'
+            )
 
     def beginLoop(self, setup):
         super(TauAnalyzer,self).beginLoop(setup)
@@ -85,6 +92,37 @@ class TauAnalyzer( Analyzer ):
             tau.idAntiMu = tau.tauID("againstMuonLoose3") + tau.tauID("againstMuonTight3")
             tau.idAntiE = id5(tau, "againstElectron%sMVA6")
             #print "Tau pt %5.1f: idMVA2 %d, idCI3hit %d, %s, %s" % (tau.pt(), tau.idMVA2, tau.idCI3hit, tau.tauID(self.cfg_ana.tauID), tau.tauID(self.cfg_ana.tauLooseID))
+
+
+            ###################################################################################
+
+            #tau_wps = ['Loose', 'Medium', 'Tight', 'VLoose', 'VTight', 'VVTight', 'raw']
+            
+            #for wp in tau_wps:
+            #    self.handles['taumva_{wp}'.format(wp=wp)] = AutoHandle(
+            #        'rerunDiscriminationByIsolationMVArun2v1{wp}'.format(wp=wp),
+            #        'pat::PATTauDiscriminator'
+            #    )
+
+            for wp in self.tau_wps:
+                mvas = self.handles['taumva_{wp}'.format(wp=wp)].product()
+                for i_mva in xrange(len(mvas)):
+                    ref_tau = mvas.key(i_mva).get()
+                    ref_tau_pt, ref_tau_eta, ref_tau_phi = ref_tau.pt(), ref_tau.eta(), ref_tau.phi()
+                    eps = 0.0001
+                    # The CompositeCandidate owns the taus (copy on construction)
+                    # so we cannot use the refs to the taus
+                    if abs(ref_tau_phi - tau.phi()) < eps and abs(ref_tau_eta - tau.eta()) < eps and abs(ref_tau_pt - tau.pt()) < eps:
+                        setattr(tau, 'NewMVA'+wp, mvas.value(i_mva))
+            if not hasattr(tau, 'NewMVA'+self.tau_wps[0]):
+                raise RuntimeError('Tau MVA Value', 'NewMVA'+self.tau_wps[0], 'not saved in tau')
+            tau.NewMVAID = sum(getattr(tau, 'NewMVA'+wp) for wp in self.tau_wps if not 'raw' in wp)
+
+
+
+            ###################################################################################
+
+            
             
             if tau.tauID(self.cfg_ana.inclusive_tauID):
                 event.inclusiveTaus.append(tau)

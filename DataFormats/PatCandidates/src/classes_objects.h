@@ -188,7 +188,9 @@ namespace DataFormats_PatCandidates {
   pat::PATTauDiscriminatorRefProd                  pattdiscr_rp;
   pat::PATTauDiscriminatorRefVector                pattdiscr_rv;
   edm::Wrapper<pat::PATTauDiscriminator>           pattdiscr_w;
-   
+
+    edm::RefProd<std::vector<pat::Tau> >           pattau_rp;
+    
   std::pair<pat::TauRef, float>                              pattdiscr_p;
   std::vector<std::pair<pat::TauRef, float> >                pattdiscr_v;    
   };
