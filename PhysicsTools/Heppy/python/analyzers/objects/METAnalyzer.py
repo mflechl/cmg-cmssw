@@ -38,6 +38,8 @@ class METAnalyzer( Analyzer ):
         if self.cfg_ana.isDilepton:
             self.handles['diLeptons'] = AutoHandle( 'MVAMET:MVAMET','std::vector<pat::MET>' ) #JB
 
+        self.handles['corrMET'] = AutoHandle( 'METSignificance', 'std::vector<reco::MET>' ) #JB
+
             
     def beginLoop(self, setup):
         super(METAnalyzer,self).beginLoop(setup)
@@ -106,6 +108,8 @@ class METAnalyzer( Analyzer ):
 
         if self.cfg_ana.isDilepton:
             event.dilepton = self.handles['diLeptons'].product() #JB
+
+        event.corrMET = self.handles['corrMET'].product() #JB
 
         if  hasattr(event,'zll_p4'):
             self.adduParaPerp(getattr(event,"tkMet"+self.cfg_ana.collectionPostFix), event.zll_p4,"_zll")

@@ -36,6 +36,8 @@ namespace cms
 
    produces<double>("METSignificance");
    produces<math::Error<2>::type>("METCovariance");
+   std::string alias = iConfig.exists("alias") ? iConfig.getParameter<std::string>("alias") : "";
+   produces<reco::METCollection>().setBranchAlias(alias);
    
   }
 
@@ -89,7 +91,7 @@ namespace cms
    //
    // compute the significance
    //
-   const reco::METCovMatrix cov = metSigAlgo_->getCovariance( *jets, leptons, *pfCandidates, *rho, resPtObj, resPhiObj, resSFObj, event.isRealData() );
+   reco::METCovMatrix cov = metSigAlgo_->getCovariance( *jets, leptons, *pfCandidates, *rho, resPtObj, resPhiObj, resSFObj, event.isRealData() );
    double sig  = metSigAlgo_->getSignificance(cov, met);
 
    std::auto_ptr<double> significance (new double);
@@ -102,6 +104,12 @@ namespace cms
 
    event.put( covPtr, "METCovariance" );
    event.put( significance, "METSignificance" );
+   reco::MET met_new = met;
+   met_new.setSignificanceMatrix(cov);
+   std::auto_ptr<reco::METCollection> metcoll;   
+   metcoll.reset(new reco::METCollection);
+   metcoll->push_back(met_new);
+   event.put(metcoll);
 
   }
 
