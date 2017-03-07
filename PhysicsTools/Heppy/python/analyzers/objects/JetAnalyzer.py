@@ -125,7 +125,38 @@ class JetAnalyzer( Analyzer ):
         self.shiftJER = self.cfg_ana.shiftJER if hasattr(self.cfg_ana, 'shiftJER') else 0
         self.addJERShifts = self.cfg_ana.addJERShifts if hasattr(self.cfg_ana, 'addJERShifts') else 0
         self.handles['rho'] = AutoHandle( self.cfg_ana.rho, 'double' )
-    
+        corrVar = ['JESUp','JESDown']
+        if self.cfg_comp.isMC:
+            for corr in corrVar:
+                self.handles['p4Out{0}JetsUncorAbsoluteFlavMap'.format(corr)] = AutoHandle( 'mod:p4Out{0}JetsUncorAbsoluteFlavMap'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorAbsoluteMPFBias'.format(corr)] = AutoHandle( 'mod:p4Out{0}JetsUncorAbsoluteMPFBias'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorAbsoluteScale'.format(corr)]   = AutoHandle( 'mod:p4Out{0}JetsUncorAbsoluteScale'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorAbsoluteStat'.format(corr)]    = AutoHandle( 'mod:p4Out{0}JetsUncorAbsoluteStat'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorFlavorQCD'.format(corr)]       = AutoHandle( 'mod:p4Out{0}JetsUncorFlavorQCD'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorFragmentation'.format(corr)]   = AutoHandle( 'mod:p4Out{0}JetsUncorFragmentation'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorPileUpDataMC'.format(corr)]    = AutoHandle( 'mod:p4Out{0}JetsUncorPileUpDataMC'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorPileUpPtBB'.format(corr)]      = AutoHandle( 'mod:p4Out{0}JetsUncorPileUpPtBB'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorPileUpPtEC1'.format(corr)]     = AutoHandle( 'mod:p4Out{0}JetsUncorPileUpPtEC1'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorPileUpPtEC2'.format(corr)]     = AutoHandle( 'mod:p4Out{0}JetsUncorPileUpPtEC2'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorPileUpPtHF'.format(corr)]      = AutoHandle( 'mod:p4Out{0}JetsUncorPileUpPtHF'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorPileUpPtRef'.format(corr)]     = AutoHandle( 'mod:p4Out{0}JetsUncorPileUpPtRef'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorRelativeBal'.format(corr)]     = AutoHandle( 'mod:p4Out{0}JetsUncorRelativeBal'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorRelativeFSR'.format(corr)]     = AutoHandle( 'mod:p4Out{0}JetsUncorRelativeFSR'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorRelativeJEREC1'.format(corr)]  = AutoHandle( 'mod:p4Out{0}JetsUncorRelativeJEREC1'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorRelativeJEREC2'.format(corr)]  = AutoHandle( 'mod:p4Out{0}JetsUncorRelativeJEREC2'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorRelativeJERHF'.format(corr)]   = AutoHandle( 'mod:p4Out{0}JetsUncorRelativeJERHF'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorRelativePtBB'.format(corr)]    = AutoHandle( 'mod:p4Out{0}JetsUncorRelativePtBB'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorRelativePtEC1'.format(corr)]   = AutoHandle( 'mod:p4Out{0}JetsUncorRelativePtEC1'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorRelativePtEC2'.format(corr)]   = AutoHandle( 'mod:p4Out{0}JetsUncorRelativePtEC2'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorRelativePtHF'.format(corr)]    = AutoHandle( 'mod:p4Out{0}JetsUncorRelativePtHF'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorRelativeStatEC'.format(corr)]  = AutoHandle( 'mod:p4Out{0}JetsUncorRelativeStatEC'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorRelativeStatFSR'.format(corr)] = AutoHandle( 'mod:p4Out{0}JetsUncorRelativeStatFSR'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorRelativeStatHF'.format(corr)]  = AutoHandle( 'mod:p4Out{0}JetsUncorRelativeStatHF'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorSinglePionECAL'.format(corr)]  = AutoHandle( 'mod:p4Out{0}JetsUncorSinglePionECAL'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorSinglePionHCAL'.format(corr)]  = AutoHandle( 'mod:p4Out{0}JetsUncorSinglePionHCAL'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorTimePtEta'.format(corr)]       = AutoHandle( 'mod:p4Out{0}JetsUncorTimePtEta'.format(corr),'vector<reco::LeafCandidate>' )
+                self.handles['p4Out{0}JetsUncorTotal'.format(corr)]           = AutoHandle( 'mod:p4Out{0}JetsUncorTotal'.format(corr),'vector<reco::LeafCandidate>' )
+                
     def beginLoop(self, setup):
         super(JetAnalyzer,self).beginLoop(setup)
 
@@ -184,9 +215,10 @@ class JetAnalyzer( Analyzer ):
                 self.smearJets(event, allJets)
 
 
-                
+        ##Initialize JES                        
+        originAllJets = allJets
         
-	##Sort Jets by pT 
+	##Sort Jets by pT
         allJets.sort(key = lambda j : j.pt(), reverse = True)
         
         leptons = []
@@ -358,6 +390,20 @@ class JetAnalyzer( Analyzer ):
             
             if self.cfg_ana.do_mc_match:
                 self.jetFlavour(event)
+
+        ## mapping JES uncertainty collections to cleanJetsAll
+        mappedUncert = []
+        for j in self.cleanJetsAll:
+            for i,k in enumerate(originAllJets):
+                if j.pt() == k.pt() and j.eta() == k.eta():
+                    mappedUncert.append(i)
+        
+        for key in self.handles.keys():
+            if not 'p4OutJES' in key: continue 
+            tmp = []
+            for i in mappedUncert:
+                tmp.append(self.handles[key].product()[i])
+            setattr(event,key                  +self.cfg_ana.collectionPostFix, tmp                    )
 
         if hasattr(event,"jets"+self.cfg_ana.collectionPostFix): raise RuntimeError("Event already contains a jet collection with the following postfix: "+self.cfg_ana.collectionPostFix)
         setattr(event,"rho"                    +self.cfg_ana.collectionPostFix, self.rho                    ) 
